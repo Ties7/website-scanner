@@ -1,10 +1,12 @@
 ---
-let boodschap = '';
+import { scanWebsite } from '../lib/scanner.js';
+
+let resultaat = null;
 
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData();
   const url = formData.get('url');
-  boodschap = `Je vulde in: ${url}`;
+  resultaat = await scanWebsite(url);
 }
 ---
 <html lang="nl">
@@ -17,6 +19,8 @@ if (Astro.request.method === 'POST') {
       <button type="submit">Scan</button>
     </form>
 
-    {boodschap && <p>{boodschap}</p>}
+	{resultaat && (
+	<p>{resultaat.url} SEO: {resultaat.seoScore}, Performance: {resultaat.performanceScore}</p>
+	)}
   </body>
 </html>
