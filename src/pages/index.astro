@@ -1,17 +1,22 @@
 ---
+let boodschap = '';
 
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const url = formData.get('url');
+  boodschap = `Je vulde in: ${url}`;
+}
 ---
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <form method="POST">
+      <input type="text" name="url" placeholder="bijv. cafegeorge.nl" required />
+      <button type="submit">Scan</button>
+    </form>
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+    {boodschap && <p>{boodschap}</p>}
+  </body>
 </html>
