@@ -20,7 +20,7 @@ if (Astro.request.method === 'POST') {
     </form>
 
 	{resultaat && (
-	<p>{resultaat.url} SEO: {resultaat.seoScore}, Performance: {resultaat.performanceScore}</p>
+		<p>{resultaat.url} - {resultaat.verdict} (SEO: {resultaat.seoScore}, Performance: {resultaat.performanceScore})</p>
 	)}
   </body>
 </html>
