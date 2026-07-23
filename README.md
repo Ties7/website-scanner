@@ -1,43 +1,44 @@
-# Astro Starter Kit: Minimal
+# De Bon — Horeca Website Scanner
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Vul een restaurant-website in, krijg een geautomatiseerd oordeel over SEO, performance en online zichtbaarheid — inclusief een AI-review op basis van onze eigen review-prompt.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Status
 
-## 🚀 Project Structure
+In ontwikkeling. Zie het project board voor voortgang per issue: 
+https://github.com/users/Ties7/projects/24
 
-Inside of your Astro project, you'll see the following folders and files:
+## Starten
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+npm install
+npm run dev
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Open http://localhost:4321 het formulier werkt ook met JavaScript 
+uitgeschakeld.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Architectuurkeuzes
 
-Any static assets, like images, can be placed in the `public/` directory.
+### Waarom output: 'server' (astro.config.mjs)
 
-## 🧞 Commands
+Twee redenen:
+1. Het formulier moet zonder JavaScript werken (progressive enhancement). Dat vereist dat de server per binnenkomend verzoek kan reageren op wat iemand instuurt, in plaats van vooraf gebouwde statische HTML te serveren.
+2. Zodra scans worden opgeslagen in een database, moet elke bezoeker actuele data zien bij een statische build zou die data vastliggen op het moment van bouwen.
 
-All commands are run from the root of the project, from a terminal:
+### Waarom scanner.js los van de route
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Alle scan-logica staat in src/lib/scanner.js, niet in index.astro zelf. Dit houdt de route overzichtelijk, en maakt de logica later herbruikbaar (bijvoorbeeld in een los API-endpoint) zonder duplicatie.
 
-## 👀 Want to learn more?
+### Progressive enhancement
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Het formulier heeft geen action-attribuut, waardoor de browser de POST standaard naar dezelfde URL stuurt. Daardoor kan index.astro zowel het tonen van het formulier als het verwerken van de inzending afhandelen zonder JavaScript nodig, en zonder apart eindpunt.
+
+## Scope voor dit assessment
+
+Bewust wel in scope:
+- PageSpeed API (SEO/performance-scores)
+- Claude API (AI-review op basis van eigen prompt)
+- Database: scan opslaan + geschiedenis tonen
+- Verwijderen van scans (delete)
+- Deploy naar Vercel
+
+Bewust buiten scope, i.v.m. beschikbare tijd:
+- JavaScript-enhancement (fetch i.p.v. page reload) — de non-JS versie is al voldoende bewijs voor progressive enhancement
