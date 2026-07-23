@@ -1,4 +1,4 @@
-# De Bon — Horeca Website Scanner
+# De Bon, Horeca Website Scanner
 
 Vul een restaurant-website in, krijg een geautomatiseerd oordeel over SEO, performance en online zichtbaarheid — inclusief een AI-review op basis van onze eigen review-prompt.
 
