@@ -1,4 +1,5 @@
 ---
+import Layout from '../layouts/Layout.astro';
 import { scanWebsite } from '../lib/scanner.js';
 
 let resultaat = null;
@@ -9,18 +10,14 @@ if (Astro.request.method === 'POST') {
   resultaat = await scanWebsite(url);
 }
 ---
-<html lang="nl">
-  <head>
-    <meta charset="UTF-8" />
-  </head>
-  <body>
-    <form method="POST">
-      <input type="text" name="url" placeholder="bijv. cafegeorge.nl" required />
-      <button type="submit">Scan</button>
-    </form>
 
-	{resultaat && (
-		<p>{resultaat.url} - {resultaat.verdict} (SEO: {resultaat.seoScore}, Performance: {resultaat.performanceScore})</p>
-	)}
-  </body>
-</html>
+<Layout title="De Bon — Horeca Website Scanner">
+  <form method="POST">
+    <input type="text" name="url" placeholder="bijv. cafegeorge.nl" required />
+    <button type="submit">Scan</button>
+  </form>
+
+  {resultaat && (
+    <p>{resultaat.url} — {resultaat.verdict} (SEO: {resultaat.seoScore}, Performance: {resultaat.performanceScore})</p>
+  )}
+</Layout>

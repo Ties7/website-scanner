@@ -1,0 +1,60 @@
+---
+const { title = 'De Bon' } = Astro.props;
+---
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header>
+      <strong>De Bon</strong>
+      <span>gemaakt door bebr.studio</span>
+    </header>
+
+    <div class="layout">
+      <main>
+        <slot />
+      </main>
+      <aside aria-label="Eerdere scans">
+        <!-- komt in issue #6 -->
+      </aside>
+    </div>
+  </body>
+</html>
+
+<style>
+  /* Mobile first: dit is de basisstijl, geldt voor alle schermen */
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  header {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  aside {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  /* Vanaf hier: verbreding voor grotere schermen */
+  @media (min-width: 768px) {
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+    }
+
+    header {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+</style>
