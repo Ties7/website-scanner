@@ -1,5 +1,11 @@
 ---
 const { title = 'De Bon' } = Astro.props;
+
+const eerdereScans = [
+  { url: 'bistrodegracht.nl', datum: '12 mei 2025', oordeel: 'goedgekeurd' },
+  { url: 'osteria-milano.nl', datum: '9 mei 2025', oordeel: 'afgekeurd' },
+  { url: 'barbouche.nl', datum: '5 mei 2025', oordeel: 'verbeteringen' },
+];
 ---
 <html lang="nl">
   <head>
@@ -17,9 +23,20 @@ const { title = 'De Bon' } = Astro.props;
       <main>
         <slot />
       </main>
-      <aside aria-label="Eerdere scans">
-        <!-- komt in issue #6 -->
-      </aside>
+        <aside aria-label="Eerdere scans">
+        <h2>Eerdere scans</h2>
+        <ul>
+            {eerdereScans.map((scan) => (
+            <li>
+                <div>
+                <strong>{scan.url}</strong>
+                <span class="datum">{scan.datum}</span>
+                </div>
+                <span class="badge" data-status={scan.oordeel}>{scan.oordeel}</span>
+            </li>
+            ))}
+        </ul>
+        </aside>
     </div>
   </body>
 </html>
@@ -44,6 +61,42 @@ const { title = 'De Bon' } = Astro.props;
     padding: 1rem;
     border-radius: 8px;
   }
+
+    li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e0e0e0;
+    }
+
+    .datum {
+    display: block;
+    font-size: 0.8rem;
+    color: #888;
+    }
+
+    .badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    text-transform: capitalize;
+    }
+
+    .badge[data-status='goedgekeurd'] {
+    background: #dff3e4;
+    color: #2f7a3f;
+    }
+
+    .badge[data-status='afgekeurd'] {
+    background: #fbe0de;
+    color: #b23a2e;
+    }
+
+    .badge[data-status='verbeteringen'] {
+    background: #fdecd2;
+    color: #b8710f;
+    }
 
   /* Vanaf hier: verbreding voor grotere schermen */
   @media (min-width: 768px) {
