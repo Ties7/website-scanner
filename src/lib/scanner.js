@@ -3,14 +3,21 @@ export async function scanWebsite(rawUrl) {
     throw new Error('Vul een URL in.');
   }
 
-  const seoScore = 90;
-  const performanceScore = 20;
+  const seoScore = 80;
+  const performanceScore = 63;
 
   return {
     url: rawUrl,
     seoScore,
     performanceScore,
     verdict: bepaalOordeel(seoScore, performanceScore),
+    aiReview: {
+      samenvatting: 'De website maakt een warme en professionele indruk en sluit goed aan bij de sfeer van het restaurant.',
+      verbeterpunten: [
+        { tekst: 'Optimaliseer de laadtijd van afbeeldingen.', urgentie: 'hoog' },
+        { tekst: 'Voeg unieke meta titels toe voor alle pagina\'s.', urgentie: 'gemiddeld' },
+      ],
+    },
   };
 }
 
