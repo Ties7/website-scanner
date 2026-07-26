@@ -37,6 +37,20 @@ if (Astro.request.method === 'POST') {
 			</div>
 			<p class="totaaloordeel">Eindoordeel: {resultaat.verdict}</p>
 		</div>
+
+		<div class="ai-review">
+			<h3>AI-samenvatting</h3>
+			<p>{resultaat.aiReview.samenvatting}</p>
+		</div>
+
+		<div class="verbeterpunten">
+			<h3>Verbeterpunten</h3>
+			<ul>
+				{resultaat.aiReview.verbeterpunten.map((punt) => (
+				<li data-urgentie={punt.urgentie}>{punt.tekst}</li>
+				))}
+			</ul>
+		</div>
 	)}
 </Layout>
 
@@ -109,5 +123,18 @@ if (Astro.request.method === 'POST') {
 	.cirkel-label {
 		font-size: 0.75rem;
 		color: #888;
+	}
+
+
+	li[data-urgentie='laag'] {
+		color: #2f7a3f;
+	}
+
+	li[data-urgentie='gemiddeld'] {
+		color: #b8710f;
+	}
+
+	li[data-urgentie='hoog'] {
+		color: #b23a2e;
 	}
 </style>
