@@ -35,7 +35,6 @@ if (Astro.request.method === 'POST') {
 				<span class="cirkel-label">Performance</span>
 			</div>
 			</div>
-			<p class="totaaloordeel">Eindoordeel: {resultaat.verdict}</p>
 		</div>
 
 		<div class="ai-review">
@@ -50,6 +49,16 @@ if (Astro.request.method === 'POST') {
 				<li data-urgentie={punt.urgentie}>{punt.tekst}</li>
 				))}
 			</ul>
+		</div>
+
+		<div class="eindoordeel" data-status={resultaat.verdict}>
+			<div>
+				<span class="eindoordeel-label">Eindoordeel</span>
+				<strong class="eindoordeel-tekst">{resultaat.verdict}</strong>
+			</div>
+			<p class="eindoordeel-toelichting">
+				{resultaat.eindoordeelToelichting}
+			</p>
 		</div>
 	)}
 </Layout>
@@ -125,7 +134,6 @@ if (Astro.request.method === 'POST') {
 		color: #888;
 	}
 
-
 	li[data-urgentie='laag'] {
 		color: #2f7a3f;
 	}
@@ -136,5 +144,42 @@ if (Astro.request.method === 'POST') {
 
 	li[data-urgentie='hoog'] {
 		color: #b23a2e;
+	}
+
+	.eindoordeel {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding: 1.25rem;
+		border-radius: 8px;
+		margin-top: 1rem;
+	}
+
+	.eindoordeel-label {
+		display: block;
+		font-size: 0.8rem;
+		color: #888;
+	}
+
+	.eindoordeel-tekst {
+		font-size: 1.5rem;
+		text-transform: uppercase;
+	}
+
+	.eindoordeel-toelichting {
+		font-size: 0.85rem;
+		margin: 0;
+	}
+
+	.eindoordeel[data-status='goedgekeurd'] {
+		background: #dff3e4;
+	}
+
+	.eindoordeel[data-status='verbeteringen'] {
+		background: #fdecd2;
+	}
+
+	.eindoordeel[data-status='afgekeurd'] {
+		background: #fbe0de;
 	}
 </style>
