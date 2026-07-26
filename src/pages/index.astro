@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { scanWebsite } from '../lib/scanner.js';
+import { scanWebsite, bepaalOordeel } from '../lib/scanner.js';
 
 let resultaat = null;
 
@@ -17,7 +17,97 @@ if (Astro.request.method === 'POST') {
     <button type="submit">Scan</button>
   </form>
 
-  {resultaat && (
-    <p>{resultaat.url} — {resultaat.verdict} (SEO: {resultaat.seoScore}, Performance: {resultaat.performanceScore})</p>
-  )}
+	{resultaat && (
+		<div class="rapport-kop">
+		<h2>{resultaat.url}</h2>
+			<div class="cirkels">
+			<div class="cirkel-met-label">
+				<div class="score-cirkel" data-status={bepaalOordeel(resultaat.seoScore, resultaat.seoScore)} style={`--percentage: ${resultaat.seoScore}`}>
+				<span>{resultaat.seoScore}</span>
+				</div>
+				<span class="cirkel-label">SEO</span>
+			</div>
+
+			<div class="cirkel-met-label">
+				<div class="score-cirkel" data-status={bepaalOordeel(resultaat.performanceScore, resultaat.performanceScore)} style={`--percentage: ${resultaat.performanceScore}`}>
+				<span>{resultaat.performanceScore}</span>
+				</div>
+				<span class="cirkel-label">Performance</span>
+			</div>
+			</div>
+			<p class="totaaloordeel">Eindoordeel: {resultaat.verdict}</p>
+		</div>
+	)}
 </Layout>
+
+<style>
+	/* Mobile first: gestapeld als basis */
+	.rapport-kop {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	/* Vanaf hier: naast elkaar voor grotere schermen */
+	@media (min-width: 768px) {
+		.rapport-kop {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
+	}
+
+	.score-cirkel {
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: bold;
+		background: conic-gradient(
+			var(--kleur) calc(var(--percentage) * 1%),
+			#e0e0e0 0
+		);
+	}
+
+	.score-cirkel[data-status='goedgekeurd'] {
+		--kleur: #2f7a3f;
+	}
+
+	.score-cirkel[data-status='verbeteringen'] {
+		--kleur: #b8710f;
+	}
+
+	.score-cirkel[data-status='afgekeurd'] {
+		--kleur: #b23a2e;
+	}
+
+	.cirkels {
+		display: flex;
+		gap: 0.75rem;
+	}
+
+	.score-cirkel span {
+		background: white;
+		width: 46px;
+		height: 46px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.cirkel-met-label {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	.cirkel-label {
+		font-size: 0.75rem;
+		color: #888;
+	}
+</style>
