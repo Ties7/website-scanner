@@ -1,22 +1,32 @@
+function normalizeUrl(rawUrl) {
+  const trimmed = rawUrl.trim();
+  return trimmed.startsWith('http') ? trimmed : `https://${trimmed}`;
+}
+
 export async function scanWebsite(rawUrl) {
   if (!rawUrl) {
     throw new Error('Vul een URL in.');
   }
 
-  const seoScore = 80;
-  const performanceScore = 63;
+  const url = normalizeUrl(rawUrl);
+  const apiKey = import.meta.env.PAGESPEED_API_KEY;
+  const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${apiKey}&category=performance&category=seo`;
+
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+
+  const performanceScore = Math.round(data.lighthouseResult.categories.performance.score * 100);
+  const seoScore = Math.round(data.lighthouseResult.categories.seo.score * 100);
 
   return {
-    url: rawUrl,
+    url,
     seoScore,
     performanceScore,
     verdict: bepaalOordeel(seoScore, performanceScore),
+    eindoordeelToelichting: 'placeholder',
     aiReview: {
-      samenvatting: 'De website maakt een warme en professionele indruk en sluit goed aan bij de sfeer van het restaurant.',
-      verbeterpunten: [
-        { tekst: 'Optimaliseer de laadtijd van afbeeldingen.', urgentie: 'hoog' },
-        { tekst: 'Voeg unieke meta titels toe voor alle pagina\'s.', urgentie: 'gemiddeld' },
-      ],
+      samenvatting: 'placeholder',
+      verbeterpunten: [],
     },
   };
 }
