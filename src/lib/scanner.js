@@ -98,7 +98,12 @@ urgentie moet altijd "hoog", "gemiddeld", of "laag" zijn. Geef 2 tot 4 verbeterp
     }),
   });
 
-  const data = await response.json();
-  const tekstAntwoord = data.content[0].text;
-  return JSON.parse(tekstAntwoord);
+    const data = await response.json();
+    const textBlock = data.content.find((block) => block.type === 'text');
+    let tekstAntwoord = textBlock.text;
+
+    // Verwijder eventuele markdown-codeblok-opmaak die Claude soms toch toevoegt
+    tekstAntwoord = tekstAntwoord.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+    return JSON.parse(tekstAntwoord);
 }
