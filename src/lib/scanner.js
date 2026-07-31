@@ -1,3 +1,13 @@
+import { createClient } from '@sanity/client';
+
+const sanityClient = createClient({
+  projectId: import.meta.env.SANITY_PROJECT_ID,
+  dataset: import.meta.env.SANITY_DATASET,
+  apiVersion: '2024-01-01',
+  token: import.meta.env.SANITY_API_TOKEN,
+  useCdn: false,
+});
+
 function normalizeUrl(rawUrl) {
   const trimmed = rawUrl.trim();
   return trimmed.startsWith('http') ? trimmed : `https://${trimmed}`;
@@ -38,16 +48,20 @@ export async function scanWebsite(rawUrl) {
   const performanceScore = Math.round(data.lighthouseResult.categories.performance.score * 100);
   const seoScore = Math.round(data.lighthouseResult.categories.seo.score * 100);
 
-    const aiReview = await genereerAiReview(url, seoScore, performanceScore, seoDetails);
+  const aiReview = await genereerAiReview(url, seoScore, performanceScore, seoDetails);
 
-    return {
+  const resultaat = {
     url,
     seoScore,
     performanceScore,
     verdict: bepaalOordeel(seoScore, performanceScore),
     eindoordeelToelichting: 'placeholder',
     aiReview,
-    };
+  };
+
+  await slaScanOp(resultaat);
+
+  return resultaat;
 }
 
 export function bepaalOordeel(seoScore, performanceScore) {
@@ -106,4 +120,18 @@ urgentie moet altijd "hoog", "gemiddeld", of "laag" zijn. Geef 2 tot 4 verbeterp
     tekstAntwoord = tekstAntwoord.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
     return JSON.parse(tekstAntwoord);
+}
+
+async function slaScanOp(scanData) {
+  await sanityClient.create({
+    _type: 'scan',
+    url: scanData.url,
+    seoScore: scanData.seoScore,
+    performanceScore: scanData.performanceScore,
+    verdict: scanData.verdict,
+    eindoordeelToelichting: scanData.eindoordeelToelichting,
+    aiSamenvatting: scanData.aiReview.samenvatting,
+    verbeterpunten: scanData.aiReview.verbeterpunten,
+    gescandOp: new Date().toISOString(),
+  });
 }
