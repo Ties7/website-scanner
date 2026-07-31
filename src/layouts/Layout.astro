@@ -13,6 +13,7 @@ const sanityClient = createClient({
 
 const eerdereScans = await sanityClient.fetch(`
   *[_type == "scan"] | order(gescandOp desc)[0...5] {
+    _id,
     url,
     verdict,
     gescandOp
@@ -49,6 +50,10 @@ function toonDomein(url) {
                     <span class="datum">{new Date(scan.gescandOp).toLocaleDateString('nl-NL')}</span>
                 </div>
                 <span class="badge" data-status={scan.verdict}>{scan.verdict}</span>
+                <form method="POST" action="/api/verwijder-scan">
+                    <input type="hidden" name="scanId" value={scan._id} />
+                    <button type="submit" aria-label={`Verwijder scan van ${toonDomein(scan.url)}`}>×</button>
+                </form>
                 </li>
             ))}
         </ul>
