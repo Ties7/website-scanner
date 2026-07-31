@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@sanity/client": "^7.25.0",
     "astro": "^7.0.7"
   }
 }

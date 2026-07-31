@@ -1,11 +1,27 @@
 ---
 const { title = 'De Bon' } = Astro.props;
 
-const eerdereScans = [
-  { url: 'bistrodegracht.nl', datum: '12 mei 2025', oordeel: 'goedgekeurd' },
-  { url: 'osteria-milano.nl', datum: '9 mei 2025', oordeel: 'afgekeurd' },
-  { url: 'barbouche.nl', datum: '5 mei 2025', oordeel: 'verbeteringen' },
-];
+import { createClient } from '@sanity/client';
+
+const sanityClient = createClient({
+  projectId: import.meta.env.SANITY_PROJECT_ID,
+  dataset: import.meta.env.SANITY_DATASET,
+  apiVersion: '2024-01-01',
+  token: import.meta.env.SANITY_API_TOKEN,
+  useCdn: true,
+});
+
+const eerdereScans = await sanityClient.fetch(`
+  *[_type == "scan"] | order(gescandOp desc)[0...5] {
+    url,
+    verdict,
+    gescandOp
+  }
+`);
+
+function toonDomein(url) {
+  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+}
 ---
 <html lang="nl">
   <head>
@@ -27,13 +43,13 @@ const eerdereScans = [
         <h2>Eerdere scans</h2>
         <ul>
             {eerdereScans.map((scan) => (
-            <li>
+                <li>
                 <div>
-                <strong>{scan.url}</strong>
-                <span class="datum">{scan.datum}</span>
+                    <strong>{toonDomein(scan.url)}</strong>
+                    <span class="datum">{new Date(scan.gescandOp).toLocaleDateString('nl-NL')}</span>
                 </div>
-                <span class="badge" data-status={scan.oordeel}>{scan.oordeel}</span>
-            </li>
+                <span class="badge" data-status={scan.verdict}>{scan.verdict}</span>
+                </li>
             ))}
         </ul>
         </aside>
@@ -68,7 +84,21 @@ const eerdereScans = [
     align-items: center;
     padding: 0.75rem 0;
     border-bottom: 1px solid #e0e0e0;
+    gap: 0.5rem;
     }
+
+    li > div {
+    min-width: 0; /* nodig zodat text-overflow werkt binnen flexbox */
+    overflow: hidden;
+    }
+
+    li strong {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    }
+
 
     .datum {
     display: block;
@@ -77,6 +107,7 @@ const eerdereScans = [
     }
 
     .badge {
+    flex-shrink: 0; /* voorkomt dat de badge kleiner wordt geknepen */
     font-size: 0.75rem;
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
